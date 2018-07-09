@@ -40,35 +40,52 @@ namespace MtgExtensionAppender
             foreach (string filePath in Directory.EnumerateFiles(Directory.GetCurrentDirectory(), "*" + deckExtension))
             {
                 var lines = File.ReadAllLines(filePath);
-                for (int i = 0; i < lines.Length; i++)
-                {
-                    if (!HasCardName(lines, i))
-                    {
-                        lines[i] = lines[i].Insert(0, "#"); //add symbol used as commentary
-                    }
-                    else
-                    {
-                        var cardName = lines[i].Substring(lines[i].IndexOf(' ') + 1);
-                        Task<Stream> content = GetCardInformation(cardName);
-                        IList<Card> cards = (IList<Card>)jsonSerializer.ReadObject(content.Result);
-                        //TODO: do something when response isn't good or no cards are found
-                        var printings = cards.First().all_printings;
-                        string printCode;
-                        if (printings.Length > 0)
-                        {
-                            printCode = printings.FirstOrDefault(p => choosenCardSets.Contains(p.name))?.tla ?? "BUG";
-                        }
-                        else
-                        {
-                            printCode = printings[0].tla;
-                        }
-                        lines[i] = lines[i].Insert(lines[i].Length, " (" + printCode + ")");
-                    }
-                }
+                NewMethodAsync(lines, choosenCardSets).Wait();
                 File.WriteAllLines(filePath.Replace(deckExtension, ".txt"), lines);
+                Console.WriteLine($"\nDeck {filePath} created");
             }
 
+            Console.WriteLine("Text file create. Press any key to finish.");
             Console.ReadKey();
+        }
+
+        private static async Task NewMethodAsync(string[] lines, IList<string> choosenCardSets)
+        {
+            var getTasks = new List<Task>();
+            for (int i = 0; i < lines.Length; i++)
+            {
+                if (!HasCardName(lines, i))
+                {
+                    lines[i] = lines[i].Insert(0, "#"); //add symbol for commentary
+                }
+                else
+                {
+                    var cardName = lines[i].Substring(lines[i].IndexOf(' ') + 1);
+                    getTasks.Add(GetCardInformationAsync(cardName, choosenCardSets, lines, i));
+                }
+            }
+            await Task.WhenAll(getTasks);
+        }
+
+        private static async Task GetCardInformationAsync(string cardName, IList<string> choosenCardSets, string[] lines, int i)
+        {
+            var serverData = await client.GetStreamAsync(api + Uri.EscapeDataString(cardName));
+            var cards = (Card[])jsonSerializer.ReadObject(serverData);
+            var printings = cards.FirstOrDefault()?.all_printings;
+            string printCode;
+            if (printings == null)
+            {
+                printCode = "DIDN'T FIND CARD";
+            }
+            else if (printings.Length > 0)
+            {
+                printCode = printings.FirstOrDefault(p => choosenCardSets.Contains(p.name))?.tla ?? "BUG";
+            }
+            else
+            {
+                printCode = printings[0].tla;
+            }
+            lines[i] = lines[i].Insert(lines[i].Length, " (" + printCode + ")");
         }
 
         private static Task<Stream> GetCardInformation(string cardName)
