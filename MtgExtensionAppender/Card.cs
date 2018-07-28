@@ -2,7 +2,8 @@
 {
     /// <summary>
     /// This was created with the paste special shortcut. The original JSON was copied from the TappedOut.net api response 
-    /// from in Chrome's network tab
+    /// from Chrome's network tab. This was created because I didn't find a native way to use a dynamic object with key/value for the json
+    /// Only by using NewtonSoft json lib, and I didn't what to use external libs
     /// </summary>
     public class Card
     {
