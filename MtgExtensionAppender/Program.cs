@@ -44,20 +44,26 @@ namespace MtgExtensionAppender
 
         private static void ProcessLines(string[] deckLines, IList<string> permittedCardSets)
         {
-            var getTasks = new List<Task>();
+            var tasks = new List<Task>();
             for (int i = 0; i < deckLines.Length; i++)
             {
-                if (!HasCardName(deckLines, i))
+                if (!HasCardName(deckLines[i]))
                 {
                     deckLines[i] = deckLines[i].Insert(0, "#"); //add symbol for commentary
                 }
                 else
                 {
                     var cardName = deckLines[i].Substring(deckLines[i].IndexOf(' ') + 1);
-                    getTasks.Add(GetCardInformationAsync(cardName, permittedCardSets, deckLines, i));
+                    tasks.Add(GetCardInformationAsync(cardName, permittedCardSets, deckLines, i));
                 }
             }
-            Task.WhenAll(getTasks).Wait();
+            Task.WhenAll(tasks).Wait();
+
+        }
+
+        private static bool HasCardName(string line)
+        {
+            return Regex.IsMatch(line, @"^\d+");// TODO: improve this regex. Example of line with card info: 4 Gush
         }
 
         private static async Task GetCardInformationAsync(string cardName, IList<string> permittedCardSets, string[] lines, int i)
@@ -94,10 +100,6 @@ namespace MtgExtensionAppender
             return client.GetStreamAsync(api + Uri.EscapeDataString(cardName));
         }
 
-        private static bool HasCardName(string[] lines, int i)
-        {
-            // example of line with card info: 4 Gush
-            return Regex.IsMatch(lines[i], @"^\d+");
-        }
+
     }
 }
