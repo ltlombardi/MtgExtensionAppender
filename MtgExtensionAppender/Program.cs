@@ -32,9 +32,9 @@ namespace MtgExtensionAppender
 
             foreach (string filePath in Directory.EnumerateFiles(Directory.GetCurrentDirectory(), "*" + deckExtension))
             {
-                var lines = File.ReadAllLines(filePath);
-                NewMethodAsync(lines, permittedCardSets).Wait();
-                File.WriteAllLines(filePath.Replace(deckExtension, ".txt"), lines);
+                var deckLines = File.ReadAllLines(filePath);
+                ProcessLines(deckLines, permittedCardSets);
+                File.WriteAllLines(filePath.Replace(deckExtension, ".txt"), deckLines);
                 Console.WriteLine($"\nDeck {filePath} created");
             }
 
@@ -42,7 +42,7 @@ namespace MtgExtensionAppender
             Console.ReadKey();
         }
 
-        private static async Task NewMethodAsync(string[] deckLines, IList<string> permittedCardSets)
+        private static void ProcessLines(string[] deckLines, IList<string> permittedCardSets)
         {
             var getTasks = new List<Task>();
             for (int i = 0; i < deckLines.Length; i++)
@@ -57,7 +57,7 @@ namespace MtgExtensionAppender
                     getTasks.Add(GetCardInformationAsync(cardName, permittedCardSets, deckLines, i));
                 }
             }
-            await Task.WhenAll(getTasks);
+            Task.WhenAll(getTasks).Wait();
         }
 
         private static async Task GetCardInformationAsync(string cardName, IList<string> permittedCardSets, string[] lines, int i)
@@ -85,8 +85,7 @@ namespace MtgExtensionAppender
             }
             catch (Exception e)
             {
-
-                Console.WriteLine("Could not connect with Tappedout. Maybe you aren't connected to the internet. Error: " + e.Message);
+                Console.WriteLine("Could not connect with Tappedout. Error: " + e.Message);
             }
         }
 
