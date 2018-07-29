@@ -77,11 +77,11 @@ namespace MtgExtensionAppender
                 string printCode;
                 if (printings == null)
                 {
-                    printCode = "NOT_FOUND";
+                    printCode = "************NOT_FOUND";
                 }
                 else if (printings.Length > 1)
                 {
-                    printCode = printings.FirstOrDefault(p => permittedCardSets.Contains(p.name))?.tla ?? "BUG";
+                    printCode = printings.FirstOrDefault(p => permittedCardSets.Contains(p.name))?.tla ?? "************BUG";
                 }
                 else
                 {
@@ -99,7 +99,5 @@ namespace MtgExtensionAppender
         {
             return client.GetStreamAsync(api + Uri.EscapeDataString(cardName));
         }
-
-
     }
 }
