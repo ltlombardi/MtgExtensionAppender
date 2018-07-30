@@ -35,7 +35,8 @@ namespace MtgExtensionAppender
                 var deckLines = File.ReadAllLines(filePath);
                 ProcessLines(deckLines, permittedCardSets);
                 File.WriteAllLines(filePath.Replace(deckExtension, ".txt"), deckLines);
-                Console.WriteLine($"\nDeck {filePath} created");
+
+                Console.WriteLine($"Deck {Path.GetFileNameWithoutExtension(filePath)}.txt created");
             }
 
             Console.WriteLine("Press any key to finish.");
@@ -81,7 +82,11 @@ namespace MtgExtensionAppender
                 }
                 else if (printings.Length > 1)
                 {
-                    printCode = printings.FirstOrDefault(p => permittedCardSets.Contains(p.name))?.tla ?? "************BUG";
+                    printCode = printings.FirstOrDefault(p => permittedCardSets.Contains(p.name))?.tla;
+                    if (printCode == null)
+                    {
+                        printCode = "************BUG";
+                    }
                 }
                 else
                 {

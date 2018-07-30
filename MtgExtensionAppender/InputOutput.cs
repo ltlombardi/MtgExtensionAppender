@@ -21,6 +21,7 @@ namespace MtgExtensionAppender
             {
                 Console.WriteLine("Invalid option. Planeswalkers can't seem to write...");
             }
+            Console.WriteLine("");
             return WorldChampionship.Standards[selectedOption - firstOptionNumber].ValidCardSets;
         }
     }

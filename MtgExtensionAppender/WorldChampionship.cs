@@ -16,7 +16,7 @@ namespace MtgExtensionAppender
             new Standard(2000, CoreSet.Six, Block.Urza, Block.Masques),
             new Standard(2001, CoreSet.Seven,  Block.Masques, Block.Invasion),
             new Standard(2002, CoreSet.Seven, Block.Invasion, Block.Odyssey),
-            new Standard(2003, CoreSet.Seven, Block.Odyssey, Block.Onslaught),
+            new Standard(2003, CoreSet.Eight, Block.Odyssey, Block.Onslaught),
             new Standard(2004, CoreSet.Eight, Block.Onslaught, Block.Mirrodin),
             new Standard(2005, CoreSet.Ninth, Block.Kamigawa, Block.Ravnica.First()),
             new Standard(2006, CoreSet.Ninth, Block.Ravnica, Block.Coldsnap, Block.TimeSpiral.First()),
@@ -25,7 +25,7 @@ namespace MtgExtensionAppender
             new Standard(2009, CoreSet.Magic2010, Block.Alara,  Block.Zendikar.First()),
             new Standard(2010, CoreSet.Magic2011, Block.Zendikar,  Block.ScarsOfMirrodin.First()),
             new Standard(2011, CoreSet.Magic2012, Block.ScarsOfMirrodin,  Block.Innistrad.First()),
-            //there was no world championship with standar in 2012
+            //there was no world championship with standard in 2012
             new Standard(2013, CoreSet.Magic2013, Block.Innistrad, Block.ReturnToRavnica, CoreSet.Magic2014),
             new Standard(2014, CoreSet.Magic2015, Block.Theros, Block.KhansOfTarkir.First()),
             new Standard(2015, CoreSet.Magic2015, Block.Theros, Block.KhansOfTarkir, CoreSet.MagicOrigins),
@@ -119,8 +119,8 @@ namespace MtgExtensionAppender
         public static string Six = "Classic Sixth Edition";
         public static string Seven = "Seventh Edition";
         public static string Eight = "Eighth Edition";
-        public static string Tenth = "Ninth Edition";
-        public static string Ninth = "Tenth Edition";
+        public static string Ninth = "Ninth Edition";
+        public static string Tenth = "Tenth Edition";
         public static string Magic2010 = "Magic 2010";
         public static string Magic2011 = "Magic 2011";
         public static string Magic2012 = "Magic 2012";
