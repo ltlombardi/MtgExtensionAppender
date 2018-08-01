@@ -22,6 +22,8 @@ namespace MtgExtensionAppender
         private static readonly HttpClient client = new HttpClient();
         private static DataContractJsonSerializer jsonSerializer = new DataContractJsonSerializer(typeof(Card[]));
         private static readonly string deckExtension = ".dck";
+        private static string setsNotFound;
+        private static int errorCount;
 
         static void Main(string[] args)
         {
@@ -32,15 +34,23 @@ namespace MtgExtensionAppender
 
             foreach (string filePath in Directory.EnumerateFiles(Directory.GetCurrentDirectory(), "*" + deckExtension))
             {
+                resetError();
                 var deckLines = File.ReadAllLines(filePath);
                 ProcessLines(deckLines, permittedCardSets);
                 File.WriteAllLines(filePath.Replace(deckExtension, ".txt"), deckLines);
 
                 Console.WriteLine($"Deck {Path.GetFileNameWithoutExtension(filePath)}.txt created");
+                if (errorCount > 0) Console.WriteLine($"Total erros: {errorCount}. Could not find set infor for: {setsNotFound}");
             }
 
             Console.WriteLine("Press any key to finish.");
             Console.ReadKey();
+        }
+
+        private static void resetError()
+        {
+            setsNotFound = "";
+            errorCount = 0;
         }
 
         private static void ProcessLines(string[] deckLines, IList<string> permittedCardSets)
@@ -86,6 +96,8 @@ namespace MtgExtensionAppender
                     if (printCode == null)
                     {
                         printCode = "************BUG";
+                        errorCount++;
+                        setsNotFound += cardName + ", ";
                     }
                 }
                 else

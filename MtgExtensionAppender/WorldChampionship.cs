@@ -19,7 +19,7 @@ namespace MtgExtensionAppender
             new Standard(2003, CoreSet.Eight, Block.Odyssey, Block.Onslaught),
             new Standard(2004, CoreSet.Eight, Block.Onslaught, Block.Mirrodin),
             new Standard(2005, CoreSet.Ninth, Block.Kamigawa, Block.Ravnica.First()),
-            new Standard(2006, CoreSet.Ninth, Block.Ravnica, Block.Coldsnap, Block.TimeSpiral.First()),
+            new Standard(2006, CoreSet.Ninth, Block.Ravnica, Block.Coldsnap, Block.TimeSpiral.Where((s,i)=> i == 0 || i ==1).ToList()),
             new Standard(2007, CoreSet.Tenth, Block.Coldsnap, Block.TimeSpiral, Block.Lorwyn.First()),
             new Standard(2008, CoreSet.Tenth, Block.Lorwyn, Block.Shadowmoor, Block.Alara.First()),
             new Standard(2009, CoreSet.Magic2010, Block.Alara,  Block.Zendikar.First()),
@@ -46,40 +46,16 @@ namespace MtgExtensionAppender
             ValidCardSets = validCardSets;
         }
 
-        public Standard(int year, string coreSet, params IList<string>[] validCardSets)
-        {
-            Year = year;
-            var list = new List<string>() { coreSet };
-            foreach (var i in validCardSets) list.AddRange(i);
-            ValidCardSets = list;
-        }
+        public Standard(int year, params IList<string>[] validCardSets)
+            : this(year, validCardSets.SelectMany(v => v).ToList()) { }
 
 
-        public Standard(int year, IList<string> block1, IList<string> block2, string block3First) // No coreSet in 2017
-        {
-            Year = year;
-            var list = new List<string>() { block3First };
-            list.AddRange(block1);
-            list.AddRange(block2);
-            ValidCardSets = list;
-        }
+        public Standard(int year, IList<string> coreSet, IList<string> block1, string block2First)
+            : this(year, coreSet.Concat(block1).Concat(new List<string>() { block2First }).ToList()) { }
 
-        public Standard(int year, string coreSet, IList<string> block1, string block2First) // 2005, 2009-2011, 2014
-        {
-            Year = year;
-            var list = new List<string>() { coreSet, block2First };
-            list.AddRange(block1);
-            ValidCardSets = list;
-        }
+        public Standard(int year, IList<string> coreSet, IList<string> block1, IList<string> block2, string block3First)
+    : this(year, coreSet.Concat(block1).Concat(block2).Concat(new List<string>() { block3First }).ToList()) { }
 
-        public Standard(int year, string coreSet, IList<string> block1, IList<string> block2, string block3FirstORCoreSet2) // 2006-2008, 2013, 2015
-        {
-            Year = year;
-            var list = new List<string>() { coreSet, block3FirstORCoreSet2 };
-            list.AddRange(block1);
-            list.AddRange(block2);
-            ValidCardSets = list;
-        }
     }
 
     static class Block
@@ -95,7 +71,7 @@ namespace MtgExtensionAppender
         public static IList<string> Kamigawa = new List<string> { "Champions of Kamigawa", "Betrayers of Kamigawa", "Saviors of Kamigawa" };
         public static IList<string> Ravnica = new List<string> { "Ravnica: City of Guilds", "Guildpact", "Dissension" };
         public static IList<string> Coldsnap = new List<string> { "Coldsnap" };
-        public static IList<string> TimeSpiral = new List<string> { "Time Spiral", "Planar Chaos", "Future Sight" };
+        public static IList<string> TimeSpiral = new List<string> { "Time Spiral", "Time Spiral \"Timeshifted\"", "Planar Chaos", "Future Sight" };
         public static IList<string> Lorwyn = new List<string> { "Lorwyn", "Morningtide" };
         public static IList<string> Shadowmoor = new List<string> { "Shadowmoor", "Eventide" };
         public static IList<string> Alara = new List<string> { "Shards of Alara", "Conflux", "Alara Reborn" };
@@ -114,20 +90,20 @@ namespace MtgExtensionAppender
 
     static class CoreSet
     {
-        public static string Fourth = "Fourth Edition";
-        public static string Fifth = "Fifth Edition";
-        public static string Six = "Classic Sixth Edition";
-        public static string Seven = "Seventh Edition";
-        public static string Eight = "Eighth Edition";
-        public static string Ninth = "Ninth Edition";
-        public static string Tenth = "Tenth Edition";
-        public static string Magic2010 = "Magic 2010";
-        public static string Magic2011 = "Magic 2011";
-        public static string Magic2012 = "Magic 2012";
-        public static string Magic2013 = "Magic 2013";
-        public static string Magic2014 = "Magic 2014";
-        public static string Magic2015 = "Magic 2015";
-        public static string MagicOrigins = "Magic Origins";
-        public static string CoreSet2019 = "Core Set 2019";
+        public static IList<string> Fourth = new List<string> { "Fourth Edition" };
+        public static IList<string> Fifth = new List<string> { "Fifth Edition" };
+        public static IList<string> Six = new List<string> { "Classic Sixth Edition" };
+        public static IList<string> Seven = new List<string> { "Seventh Edition" };
+        public static IList<string> Eight = new List<string> { "Eighth Edition" };
+        public static IList<string> Ninth = new List<string> { "Ninth Edition" };
+        public static IList<string> Tenth = new List<string> { "Tenth Edition" };
+        public static IList<string> Magic2010 = new List<string> { "Magic 2010", "2010 Core Set" };
+        public static IList<string> Magic2011 = new List<string> { "Magic 2011", "2011 Core Set" };
+        public static IList<string> Magic2012 = new List<string> { "Magic 2012", "2012 Core Set" };
+        public static IList<string> Magic2013 = new List<string> { "Magic 2013", "2013 Core Set" };
+        public static IList<string> Magic2014 = new List<string> { "Magic 2014", "2014 Core Set" };
+        public static IList<string> Magic2015 = new List<string> { "Magic 2015", "2015 Core Set" };
+        public static IList<string> MagicOrigins = new List<string> { "Magic Origins" };
+        public static IList<string> CoreSet2019 = new List<string> { "Core Set 2019" };
     }
 }
