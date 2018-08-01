@@ -28,7 +28,7 @@ namespace MtgExtensionAppender
         static void Main(string[] args)
         {
             Console.WriteLine($"This app converts {deckExtension} MTG deck file to txt and adds the card set info for each card.");
-            Console.WriteLine($"You need to put the deck files in the same folder as this app.");
+            Console.WriteLine($"You need to put the deck files in the same folder as this app.\n");
 
             IList<string> permittedCardSets = InputOutput.AskUserForCardSets();
 
@@ -39,12 +39,16 @@ namespace MtgExtensionAppender
                 ProcessLines(deckLines, permittedCardSets);
                 File.WriteAllLines(filePath.Replace(deckExtension, ".txt"), deckLines);
 
-                Console.WriteLine($"Deck {Path.GetFileNameWithoutExtension(filePath)}.txt created");
+                Console.WriteLine($"Deck {Path.GetFileNameWithoutExtension(filePath)}.txt created"
+                    + (errorCount > 0 ? $" with error" : ""));
+                Console.ForegroundColor = ConsoleColor.Red;
                 if (errorCount > 0) Console.WriteLine($"Total erros: {errorCount}. Could not find set infor for: {setsNotFound}");
+                Console.ResetColor();
             }
 
-            Console.WriteLine("Press any key to finish.");
-            Console.ReadKey();
+            Console.WriteLine("Press y to to finish.");
+            while (Console.ReadKey().KeyChar != 'y') { }
+
         }
 
         private static void resetError()
@@ -92,7 +96,7 @@ namespace MtgExtensionAppender
                 }
                 else if (printings.Length > 1)
                 {
-                    printCode = printings.FirstOrDefault(p => permittedCardSets.Contains(p.name))?.tla;
+                    printCode = printings.FirstOrDefault(p => permittedCardSets.Contains(p.name.Trim()))?.tla;
                     if (printCode == null)
                     {
                         printCode = "************BUG";
@@ -108,7 +112,9 @@ namespace MtgExtensionAppender
             }
             catch (Exception e)
             {
-                Console.WriteLine("Could not connect with Tappedout. Error: " + e.Message);
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"Could not connect with Tappedout to work on {cardName}. Error: " + e.Message);
+                Console.ResetColor();
             }
         }
 
